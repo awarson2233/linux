@@ -41,19 +41,11 @@ Migration decisions
   operation remains unverified.
 * Import right-0903 force-GSI patch fb123793bfdc5a58f94aaf54ae06b47c9c797b7e
   so the existing qcom,force-gsi-mode property is actually consumed.
-* Keep the existing Himax/hx-algo driver and import two focused fixes from
-  vahiru/gaokun-android at 823585fee8f2b820cdafd0fdc24a6bcd864e0dd8:
-  patch 0040 rebuilds SPI read commands on retry and fits the event stack
-  into one transfer; patch 0038 compares jumps with predicted positions.
-  Preserve the source author. Coordinate ranges and default tuning are
-  unchanged; jump detection remains disabled by default.
-  Host tests of the actual read and tracker functions pass after reproducing
-  both failures on the parent. The Himax object builds with W=1 without
-  warnings after correcting two inherited kernel-doc comments.
-* Broader touchscreen algorithm replacement is pending. ts/caidj0 at
-  5c868c89d36992bf98e48e3c37f525716b6c74d1 predates main transport changes
-  through accd3ec; it is not a drop-in newer driver. Do not mix its raw
-  coordinate scale with the current EGoTouchRev-Linux implementation.
+* Touch defaults to I2C-HID through the mainline hid-over-i2c node; the
+  controller computes the touches. The in-kernel Himax/hx-algo SPI driver
+  is removed. sc8280xp-huawei-gaokun3-touch-spi.dtb switches both
+  controllers to SPI for the himax-thp transport (CONFIG_HIMAX_THP), which
+  hands raw frames to a userspace daemon (egotouchd from EGoTouchRev).
 * CONFIG_INPUT_UINPUT=m is already present in the imported configuration.
   The user-space parts of PR #2 belong in the image repository.
 
