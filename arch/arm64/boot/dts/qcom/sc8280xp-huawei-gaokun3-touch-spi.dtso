@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * Switch the Gaokun3 touch controllers from I2C-HID to SPI, where they stream
+ * capacitance frames for a host side touch daemon. A controller latches its
+ * interface on the next reset; the SPI driver drives the interface select line
+ * low before that reset is issued.
+ */
+
+/dts-v1/;
+/plugin/;
+
+&touchscreen_hid {
+	status = "disabled";
+};
+
+&spi6 {
+	status = "okay";
+};
+
+&spi20 {
+	status = "okay";
+};

@@ -634,14 +634,31 @@
 
 
 &i2c4 {
-	clock-frequency = <1000000>;
+	clock-frequency = <400000>;
 
 	pinctrl-0 = <&i2c4_default>;
 	pinctrl-names = "default";
 
 	status = "okay";
 
-	/* himax ic @48 @49, enable this bus for userspace i2c IO */
+	/*
+	 * The touch controller comes up in I2C-HID mode from firmware. The SPI
+	 * description below is enabled instead by
+	 * sc8280xp-huawei-gaokun3-touch-spi.dtso.
+	 */
+	touchscreen_hid: touchscreen@4f {
+		compatible = "hid-over-i2c";
+		reg = <0x4f>;
+
+		hid-descr-addr = <0x1>;
+		interrupts-extended = <&tlmm 175 IRQ_TYPE_LEVEL_LOW>;
+
+		vdd-supply = <&vreg_misc_3p3>;
+		vddl-supply = <&vreg_s10b>;
+
+		pinctrl-0 = <&ts0_default>;
+		pinctrl-names = "default";
+	};
 };
 
 &spi6 {
@@ -650,17 +667,19 @@
 	pinctrl-0 = <&spi6_default>;
 	pinctrl-names = "default";
 
-	status = "okay";
-
 	touchscreen@0 {
 		compatible = "himax,hx83121a-ts";
 		reg = <0>;
 
-		// TODO: power supply, always on rencently
-		interrupts-extended = <&tlmm 175 IRQ_TYPE_LEVEL_LOW>;
+		interrupts-extended = <&tlmm 175 IRQ_TYPE_EDGE_FALLING>;
 		reset-gpios = <&tlmm 99 GPIO_ACTIVE_LOW>;
+		mode-gpios = <&tlmm 174 GPIO_ACTIVE_HIGH>;
+
+		vdd-supply = <&vreg_misc_3p3>;
+		vddl-supply = <&vreg_s10b>;
 
 		panel = <&panel>;
+		himax,cascade = <&touchscreen_secondary>;
 
 		spi-max-frequency = <12000000>;
 
@@ -675,6 +694,23 @@
 		touchscreen-inverted-x;
 
 		pinctrl-0 = <&ts0_default>;
+		pinctrl-names = "default";
+	};
+};
+
+&spi20 {
+	pinctrl-0 = <&spi20_default>;
+	pinctrl-names = "default";
+
+	touchscreen_secondary: touchscreen@0 {
+		compatible = "himax,hx83121a-ts";
+		reg = <0>;
+
+		interrupts-extended = <&tlmm 39 IRQ_TYPE_EDGE_FALLING>;
+
+		spi-max-frequency = <12000000>;
+
+		pinctrl-0 = <&ts1_default>;
 		pinctrl-names = "default";
 	};
 };
@@ -1622,6 +1658,36 @@
 		};
 	};
 
+	spi20_default: spi20-default-state {
+		miso-pins {
+			pins = "gpio87";
+			function = "qup20";
+			drive-strength = <2>;
+			bias-pull-down;
+		};
+
+		mosi-pins {
+			pins = "gpio88";
+			function = "qup20";
+			drive-strength = <2>;
+			bias-pull-down;
+		};
+
+		clk-pins {
+			pins = "gpio89";
+			function = "qup20";
+			drive-strength = <2>;
+			bias-pull-down;
+		};
+
+		cs-pins {
+			pins = "gpio90";
+			function = "qup20";
+			drive-strength = <2>;
+			bias-pull-down;
+		};
+	};
+
 	spi6_default: spi6-default-state {
 		miso-n-pins {
 			pins = "gpio154";
@@ -1656,15 +1722,6 @@
 	};
 
 	ts0_default: ts0-default-state {
-		/* Select SPI before the touchscreen driver releases reset. */
-		mode-select-pins {
-			pins = "gpio174";
-			function = "gpio";
-			drive-strength = <16>;
-			bias-pull-up;
-			output-low;
-		};
-
 		int-n-pins {
 			pins = "gpio175";
 			function = "gpio";
@@ -1674,6 +1731,16 @@
 
 		reset-n-pins {
 			pins = "gpio99";
+			function = "gpio";
+			drive-strength = <2>;
+			bias-disable;
+			output-high;
+		};
+	};
+
+	ts1_default: ts1-default-state {
+		int-n-pins {
+			pins = "gpio39";
 			function = "gpio";
 			drive-strength = <2>;
 			bias-disable;
