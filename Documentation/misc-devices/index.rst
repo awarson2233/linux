@@ -15,6 +15,7 @@ fit into other categories.
    amd-sbi
    bh1770glc
    c2port
+   himax-thp
    dw-xdata-pcie
    ibmvmc
    ics932s401

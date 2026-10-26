@@ -11650,6 +11650,14 @@ S:	Maintained
 F:	Documentation/devicetree/bindings/input/touchscreen/trivial-touch.yaml
 F:	drivers/input/touchscreen/himax_hx83112b.c
 
+HIMAX HX83121A THP TRANSPORT DRIVER
+M:	Detach0-0 <detachovo@gmail.com>
+S:	Maintained
+F:	Documentation/devicetree/bindings/input/touchscreen/himax,hx83121a-ts.yaml
+F:	Documentation/misc-devices/himax-thp.rst
+F:	drivers/misc/himax-thp.c
+F:	include/uapi/linux/himax_thp.h
+
 HIMAX HX852X TOUCHSCREEN DRIVER
 M:	Stephan Gerhold <stephan@gerhold.net>
 L:	linux-input@vger.kernel.org

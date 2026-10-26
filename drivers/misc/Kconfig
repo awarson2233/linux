@@ -381,6 +381,21 @@ config SENSORS_BH1770
 	   To compile this driver as a module, choose M here: the
 	   module will be called bh1770glc. If unsure, say N here.
 
+config HIMAX_THP
+	tristate "Himax HX83121A SPI transport for a userspace touch daemon"
+	depends on SPI && OF
+	depends on DRM || !DRM
+	help
+	  Expose the SPI buses, frame interrupts and reset line of Himax
+	  HX83121A touch controllers in host processing mode through
+	  /dev/himax_thp. A userspace daemon such as egotouchd from
+	  EGoTouchRev initializes the controllers and computes touches from
+	  their capacitance frames. On Gaokun3 this needs the
+	  sc8280xp-huawei-gaokun3-touch-spi.dtb device tree.
+
+	  To compile this driver as a module, choose M here: the module will
+	  be called himax-thp.
+
 config HMC6352
 	tristate "Honeywell HMC6352 compass"
 	depends on I2C
